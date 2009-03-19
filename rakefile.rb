@@ -1,5 +1,7 @@
-task :default => :test
+require 'rake'
+require 'spec/rake/spectask'
 
-task :test do
-      require File.dirname(__FILE__) + '/test/all_tests.rb'  
+desc "Run all specs"
+Spec::Rake::SpecTask.new('specs') do |t|
+      t.spec_files = FileList['spec/*.rb']
 end
