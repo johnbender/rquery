@@ -12,27 +12,24 @@ RQuery can extend ActiveRecord to provide the `where` method. `where` accepts a 
 
 ###Example
 
-In a UsersController generally your `show` action might look something like:
+In a given UsersController your `show` action might find the User like so:
 
-  def show
     @user = User.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @event }
-    end
-  end
 
 Using RQuery:
 
-  def show
     @user = User.where { :id.is == params[:id] }
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @event }
+
+In the above case, RQuery doesn't provide much of an improvement over the traditional `find` method, but as the query becomes more complex its expressiveness begins to shine through:
+
+    @users = User.find(:all, conditions => ["age between ? and ?", params[:start_age], params[:finish_age]])
+
+RQuery:
+
+    @users = User.where do 
+        :age.between params[:start_age], params[:finish_age]
     end
-  end
 
 
 
