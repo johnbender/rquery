@@ -42,7 +42,7 @@ Both the `from` and `between` methods accept argument lists `10,20` or an array 
 
 ###Other Examples 
 
-RQuery supports most of the common SQL operations: =, <>, >, <, >=, <=  as well as in, like (see below for specifics), and between. `:column.is_not` works for works for in, between, contains, and ==. All operations are anded as of the current version.
+RQuery supports most of the common SQL operations: =, <>, >, <, >=, <=  as well as in, like (see below for specifics), and between. `:column.is_not` works for `.in`, `.between`, `.contains`, and `==`. All operations are anded as of the current version.
 
 Operators:
 
@@ -59,6 +59,21 @@ Contains:
     end
     #=> conditions array: ["foo like '%' || ? || '%'", "bar"]
     #using the default sqlite adapter
+
+
+You can also limit the results returned in a similar manner to the `find` method by passing a symbol argument to the where method. The default is `:all`, when no option is specified.
+
+First:
+
+    @obj = ActiveRecordObject.where(:first) do
+        :foo.is == "bar"
+    end
+
+is equivalent to the find call:
+
+    @obj = ActiveRecordObject.find(:first, conditions => ["foo = ?", "bar"])
+
+
 
 
     
