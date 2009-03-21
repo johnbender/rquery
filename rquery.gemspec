@@ -1,20 +1,19 @@
 Gem::Specification.new do |s|
   s.name        = "rquery"
-  s.version     = "0.1.1"
+  s.version     = "0.1.2"
   s.date        = "2000-03-16"
   
   s.summary     = "A ruby DSL for building data queries in SQL and other query languages."
   s.description = ""
  
   s.authors     = [ "John bender" ]
-  s.email       = "john.bender@gmail.com"
+  s.email       = "john.m.bender@gmail.com"
   s.homepage    = "http://nickelcode.com/rquery/"
  
   s.has_rdoc    = true
   
   s.files       = %w(
     README.markdown
-    init.rb
     rakefile.rb
     lib/rquery.rb
     lib/rquery/declarations.rb
