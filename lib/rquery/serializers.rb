@@ -65,6 +65,11 @@ module RQuery
                     @@ops[@@ops.length-1] += " #{RQuery.adapter.send("#{@@prefix}between")}"
                 end
 
+                def contains(str)
+                    @@values << str
+                    @@ops[@@ops.length-1] += " #{RQuery.adapter.send("#{@@prefix}contains")}"
+                end
+
                 #allows for is.from
                 #examples:
                 #
@@ -80,7 +85,7 @@ module RQuery
 
             #define the normal operators for is to call the adapter for the equivelant sql
             class << self
-                [:==, :>, :>=, :<, :<=, :contains].each do |operator|                    
+                [:==, :>, :>=, :<, :<=].each do |operator|                    
                     define_method(operator) do |val|
                         @@values << val
                         @@ops[@@ops.length-1] += " #{RQuery.adapter.send(operator)}"

@@ -12,9 +12,10 @@ describe RQuery::Adapters::Sqlite do
         @adapter.in.should == "in (?)"
         @adapter.not_in.should == "not in (?)"
         @adapter.between.should == "between ? and ?"
-        @adapter.not_between.should == "not between ? and ?"
+        @adapter.not_between.should == "not " + @adapter.between
         @adapter.neq.should == "<> ?"
-        @adapter.contains == "like '%' || ? || '%'"
+        @adapter.contains.should == "like '%' || ? || '%'"
+        @adapter.not_contains.should == "not " + @adapter.contains 
     end
 
 

@@ -60,6 +60,14 @@ Contains:
     #=> conditions array: ["foo like '%' || ? || '%'", "bar"]
     #using the default sqlite adapter
 
+In:
+
+   @obj = ActiveRecordObject.where do
+        :foo.in "bar", "baz", "bak"
+    end
+    #=> conditions array: ["foo in (?)", ["bar", "baz", "bak"]]
+    #using the default sqlite adapter
+
 
 You can also limit the results returned in a similar manner to the `find` method by passing a symbol argument to the where method. The default is `:all`, when no option is specified.
 
