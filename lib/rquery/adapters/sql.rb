@@ -31,9 +31,13 @@ module RQuery
                 def contains
                     "like '%' + ? + '%'"
                 end
+                
+                def and_group(ops)
+                  "(#{ops.join(" and ")})"
+                end
 
-                def join(ops)
-                    ops.join(" and ")
+                def or_group(ops)
+                  "(#{ops.join(" or ")})"
                 end
 
                 [:>, :>=, :<, :<=].each do |operator|
@@ -41,6 +45,8 @@ module RQuery
                         "#{operator} ?"
                     end
                 end
+
+                alias :join :and_group
             end
         end
     end
