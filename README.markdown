@@ -8,7 +8,7 @@ Currently only the ActiveRecord extension is implemented with a Sqlite adapter. 
 ActiveRecord
 ------------
 
-RQuery can extend ActiveRecord to provide the `where` method. `where` accepts a single optional argument and a block that represents the query statements
+RQuery extend ActiveRecord to provide the `where` method. `where` accepts a single optional argument and a block that represents the query statements
 
 ###Example compared with `find`
 
