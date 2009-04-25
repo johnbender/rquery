@@ -12,6 +12,7 @@ describe ActiveRecord do
 
     before(:all) do
         RQuery.adapter = RQuery::Adapters::Sqlite
+        RQuery.use_symbols
     end
 
     #should really set up the find method defined above to use the ruby db libraries and 

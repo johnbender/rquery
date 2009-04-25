@@ -1,39 +1,34 @@
-
 module RQuery
-    module Declarations
-        def is
-            RQuery::Serializers::IsOperations.add_operation(self)
-            RQuery::Serializers::IsOperations.prefix = nil
-            RQuery::Serializers::IsOperations
-        end
-
-        def is_not
-            RQuery::Serializers::IsNotOperations.add_operation(self)
-            RQuery::Serializers::IsNotOperations.prefix = "not_"
-            RQuery::Serializers::IsNotOperations
-        end
-
-        def in(*args)
-            RQuery::Serializers::IsOperations.add_operation(self)
-            RQuery::Serializers::IsOperations.prefix = nil
-            RQuery::Serializers::IsOperations.in(*args)
-        end
-
-        def between(*args)
-            RQuery::Serializers::IsOperations.add_operation(self)
-            RQuery::Serializers::IsOperations.prefix = nil
-            RQuery::Serializers::IsOperations.between(*args)
-        end
-
-        def contains(val)
-            RQuery::Serializers::IsOperations.add_operation(self)
-            RQuery::Serializers::IsOperations.prefix = nil
-            RQuery::Serializers::IsOperations.contains(val)
-        end
-
-        alias :from :between
+  module Declarations
+    #Allows the methods below to be included in 
+    #the Field class and the Symbol class but remain
+    #the same in implementation
+    #!name is redefined as an attr_accessor in the Field class!
+    def name
+      self.to_s if @name == nil
     end
+    
+    def is
+      Serializers::IsOperations.add_operation(name)
+      Serializers::IsOperations.prefix = nil
+      Serializers::IsOperations
+    end
+    
+    def is_not
+      Serializers::IsNotOperations.add_operation(name)
+      Serializers::IsNotOperations.prefix = "not_"
+      Serializers::IsNotOperations
+    end
+    
+    [:in, :between, :contains].each do |m|
+      define_method(m) do |*args|
+        Serializers::IsOperations.add_operation(name)
+        Serializers::IsOperations.prefix = nil
+        Serializers::IsOperations.send(m, *args)
+      end
+    end
+    
+    alias :from :between
+  end
 end
-
-Symbol.send :include, RQuery::Declarations
 

@@ -20,23 +20,42 @@ module RQuery
         end
         
         def to_s
-          puts @@ops
           RQuery.adapter.join(@@ops)
         end
         
+        #return a conditions array for use with ActiveRecord.find
         def conditions
           [to_s] + @@values
         end
         
+        #add and operation to the @@ops array which will be popped
+        #and pushed depending on the operations sequence and arrangement
         def add_operation(val)
           @@ops << val.to_s
         end
-        
+
+        #clean out the Operations singleton class variables
         def clear
           @@ops.clear
           @@values.clear
         end
         
+        #grouping is done by using the | and & operators between multiple operations
+        #objects on a single line.
+        #
+        #This works because each operation ie (user.age.is == 2) is
+        #evaluated before these two operators thus pushing
+        #the equivelant operation string onto the @@ops array (ie 'age = ?'). 
+        #When an operation is evaluated it returns the Operations class which can be compared
+        #using the aforementioned operators. Those operators call the group method
+        #popping the last two arguments off the stack and dealing with them in one of two ways
+        #
+        #1. if the second object popped is a string both objects should be
+        #   added to a new OperationGroup which is then put back onto the stack
+        #
+        #2. if the second object popped is an OperationGroup the firest belongs to this group as
+        #   well (it was on the same line). It is added to the OperationGroup and put back on the
+        #   stack
         def group(type)
           second_op, first_op = @@ops.pop, @@ops.pop
           
@@ -49,6 +68,20 @@ module RQuery
           end
         end
         
+        #used to group operations for anding on a single line
+        #example with sqlite adapter
+        #(user.age.in [1,2,3]) | (user.name.contains "foo")
+        #=>(age in (?) and name like '%' || 'foo' || '%')
+        def &(second)
+          self.group(:and)
+          self
+        end
+        
+        def |(second)
+          self.group(:or)
+          self
+        end
+
         def in(*args)
           #flatten our args to prevent having to check for an array first arg
           args.flatten!
@@ -60,10 +93,9 @@ module RQuery
           #:id.between 1..100 => [1..100] => 1..100
           #:id.between [1, 2, 3] => [1, 2, 3] => [1, 2, 3]
           #:id.between 1, 2 => [1, 2] => [1, 2] 
-          #
           @@values << (args.first.class == Range ? args.first : args)
           @@ops[@@ops.length-1] += " #{RQuery.adapter.send("#{@@prefix}in")}"
-          RQuery::LogicStub.new
+          self
         end
         
         def between(*args)
@@ -80,13 +112,13 @@ module RQuery
           #
           @@values += (args.first.class == Range ? [args.first.first, args.first.last] : [args.first, args.last])
           @@ops[@@ops.length-1] += " #{RQuery.adapter.send("#{@@prefix}between")}"
-          RQuery::LogicStub.new
+          self
         end
         
         def contains(str)
           @@values << str
           @@ops[@@ops.length-1] += " #{RQuery.adapter.send("#{@@prefix}contains")}"
-          RQuery::LogicStub.new
+          self
         end
         
         #allows for is.from
@@ -122,7 +154,7 @@ module RQuery
           define_method(operator) do |val|
             @@values << val
             @@ops[@@ops.length-1] += " #{RQuery.adapter.send(operator)}"
-            RQuery::LogicStub.new
+            self
           end
         end
       end
@@ -135,10 +167,10 @@ module RQuery
     class IsNotOperations < Operations      
       #define the == value for is_not to call the adapter for the equivelant sql
       class << self
-        define_method(:==) do |val|
+        def ==(val) 
           @@values << val
           @@ops[@@ops.length-1] += " #{RQuery.adapter.send(:neq)}"
-          RQuery::LogicStub.new
+          self
         end
       end
 
