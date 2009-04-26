@@ -5,15 +5,15 @@ $: << File.expand_path(File.dirname(__FILE__) + "/../lib/")
 
 require "rquery/serializers.rb"
 require "rquery/declarations.rb"
-require "rquery/field.rb"
-require "rquery/field_collection.rb"
+require "rquery/attribute.rb"
+require "rquery/attribute_collection.rb"
 require "rquery/adapters.rb"
 require "rquery/active_record.rb"
 
 module RQuery
   class << self 
     attr_accessor :adapter
-    
+
     def use_symbols
       Symbol.send(:include, RQuery::Declarations)
     end
