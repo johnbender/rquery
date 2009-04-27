@@ -8,9 +8,23 @@ Currently only the ActiveRecord extension is implemented with a Sqlite adapter. 
 ActiveRecord
 ------------
 
-RQuery extend ActiveRecord to provide the `where` method. `where` accepts a single optional argument and a block that represents the query statements
+###Setup/Config and Symbols vs Block parameters
 
-###Example compared with `find`
+In you're rails environment file simply require rquery. The default adapter is the included Sqlite adapter but you can created and set your own with
+
+    RQuery.adapter = class 
+
+You can view both Sql and Sqlite in the adapters directory if you are interested in writing your own (mysql?). As a side note it would be nice at some point to decide the adapter based on the db chosen for a given environment.
+
+Also, you can choose to use symbols as the attribute names in the block or you can use an option block argument to represent an ActiveRecord object. To use the symbols make sure to add the following to your environment.rb
+
+    RQuery.use_symbols
+
+Using the block parameter instead has two benefits. 1: you won't be poluting the Symbol objects with my hackery, and 2: RQuery will tell you when you are attempting use an attribute for the object that doesn't exist. Examples of both below.
+
+###Examples
+
+RQuery extend ActiveRecord to provide the `where` method. `where` accepts a single optional argument and a block that represents the query statements
 
 In a given UsersController your `show` action might find the User like so:
 
@@ -41,14 +55,6 @@ Or:
     end
 
 Both the `from` and `between` methods accept argument lists `10,20` or an array `[10,20]`. 
-
-###Symbols or Block parameters
-
-You can choose to use symbols as the column names in the block or you can use an option block argument to represent an ActiveRecord object. To use the symbols make sure to add the following to your environment.rb
-
-    RQuery.use_symbols
-
-Using the block parameter has two benefits. 1: you won't be poluting the Symbol objects with my hackery, and 2: RQuery will tell you when you are attempting use an attribute for the object that doesn't exist.
 
 ###Other Examples 
 
