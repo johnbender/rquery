@@ -3,7 +3,7 @@ RQuery
 
 RQuery is a small DSL inspired by RSpec for building text queries in languages like SQL. It is meant to be concise, easy to read, and expressive about what the query will be asking for.
 
-Currently only the ActiveRecord extension is implemented with a Sqlite adapter. Mysql should follow shortly, and then support for Grove + JSON queries to Mnesia.
+Currently only the ActiveRecord extension is implemented with a Sqlite adapter. Mysql should be trivial to implement, and I'm hoping to get to supporting my own project Grove.
 
 ActiveRecord
 ------------
@@ -20,6 +20,9 @@ Using RQuery:
 
     @user = User.where { :id.is == params[:id] }
 
+Or
+
+    @user = User.where { |user| user.id.is == params[:id] }
 
 In the above case, RQuery doesn't provide much of an improvement over the traditional `find` method, but as the query becomes more complex its expressiveness begins to shine through:
 
@@ -33,12 +36,19 @@ RQuery:
 
 Or:
 
-    @users = User.where do 
-        :age.between 10..20 
+    @users = User.where do |user|
+        user.age.between 10..20 
     end
 
 Both the `from` and `between` methods accept argument lists `10,20` or an array `[10,20]`. 
 
+###Symbols or Block parameters
+
+You can choose to use symbols as the column names in the block or you can use an option block argument to represent an ActiveRecord object. To use the symbols make sure to add the following to your environment.rb
+
+    RQuery.use_symbols
+
+Using the block parameter has two benefits. 1: you won't be poluting the Symbol objects with my hackery, and 2: RQuery will tell you when you are attempting use an attribute for the object that doesn't exist.
 
 ###Other Examples 
 
@@ -46,10 +56,11 @@ RQuery supports most of the common SQL operations: =, <>, >, <, >=, <=  as well 
 
 Operators:
 
-    @obj = ActiveRecordObject.where do
-        :foo.is > 2      
-        :foo.is_not == 4 
+    @obj = ActiveRecordObject.where do |obj|
+        obj.foo.is > 2      
+        obj.foo.is_not == 4 
     end 
+
     #=> conditions array: ["foo > ? and foo <> ?", 2, 4]
 
 Contains:
@@ -62,8 +73,8 @@ Contains:
 
 In:
 
-   @obj = ActiveRecordObject.where do
-        :foo.in "bar", "baz", "bak"
+   @obj = ActiveRecordObject.where do |obj|
+        obj.foo.in "bar", "baz", "bak"
     end
     #=> conditions array: ["foo in (?)", ["bar", "baz", "bak"]]
     #using the default sqlite adapter
@@ -80,6 +91,36 @@ First:
 is equivalent to the find call:
 
     @obj = ActiveRecordObject.find(:first, conditions => ["foo = ?", "bar"])
+
+###Complex queries
+
+RQuery supports relatively complex queries including | and & operation groupings. All operations need to be on the same line and in parens and either the | operator or the & operator can be used on a singel line
+
+    User.where do |user|
+        (mock.age.is > 20) | (mock.age.in 16,18)
+    end
+
+In the following example the & takes precedence and will be grouped with the contains "Alice" which will be or'd with the contains "George" 
+
+    #=> name contains "George" or (name contains "Alice and age from 20 to 30)
+    User.where do |user|
+        (user.name.contains "George") | (user.name.contains "Alice") & (use.age.from 20..30)
+    end
+
+To correct the above to the more intuitive version add parens to force precedence of the contains operations 
+    
+    #=> (name contains "George" or name contains "Alice) and age from 20 to 30
+    User.where do |user|
+        ((user.name.contains "George") | (user.name.contains "Alice")) & (use.age.from 20..30)
+    end
+
+In this sutation it would be cleaner and easier to just move the and'd statement down a line as all seperate lines are and'd and lines have precedence from top to bottom
+    
+    User.where do |user|
+        (user.name.contains "George") | (user.name.contains "Alice")
+        use.age.from 20..30
+    end
+
 
 
 
