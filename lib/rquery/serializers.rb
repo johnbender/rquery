@@ -61,8 +61,12 @@ module RQuery
           
           #if the previous operation on the stack is an Operation Group we need to add to it
           if first_op.class == RQuery::Serializers::OperationsGroup
-            first_op.ops << second_op
-            @@ops << first_op
+            if first_op.type == type
+              first_op.ops << second_op
+              @@ops << first_op
+            else
+              @@ops << OperationsGroup.new(first_op.to_s, second_op, type)
+            end
           else
             @@ops << OperationsGroup.new(first_op, second_op, type)
           end

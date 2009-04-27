@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- Created by htmlize-1.36 in css mode. -->
+<html>
+  <head>
+    <title>user.rb</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #F8F8F8;
+        background-color: #222222;
+      }
+      .comment {
+        /* font-lock-comment-face */
+        color: #5F5A60;
+        font-style: italic;
+      }
+      .comment-delimiter {
+        /* font-lock-comment-delimiter-face */
+        color: #708070;
+      }
+      .constant {
+        /* font-lock-constant-face */
+        color: #CF6A4C;
+      }
+      .keyword {
+        /* font-lock-keyword-face */
+        color: #CDA869;
+      }
+      .string {
+        /* font-lock-string-face */
+        color: #8F9D6A;
+      }
+      .type {
+        /* font-lock-type-face */
+        color: #9B703F;
+      }
+
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment-delimiter">#</span><span class="comment">All operations need to be on the same line and in parens
+</span><span class="comment-delimiter">#</span><span class="comment">either the | operator or the &amp; operator can be used on a singel line
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+  (mock.age.is &gt; 20) | (mock.age.in 16,18)
+<span class="keyword">end</span>
+
+<span class="comment-delimiter">#</span><span class="comment">the &amp; takes precedence here and will be grouped with the contains "Alice" which will be 
+</span><span class="comment-delimiter">#</span><span class="comment">or'd with the contains "George" 
+</span><span class="comment-delimiter">#</span><span class="comment">=&gt; name contains "George" or (name contains "Alice and age from 20 to 30)
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+  (user.name.contains <span class="string">"George"</span>) | (user.name.contains <span class="string">"Alice"</span>) &amp; (use.age.from 20..30)
+<span class="keyword">end</span>
+
+<span class="comment-delimiter">#</span><span class="comment">to correct the above to the more intuitive version add parens to force precedence of the
+</span><span class="comment-delimiter">#</span><span class="comment">contains operations 
+</span><span class="comment-delimiter">#</span><span class="comment">=&gt; (name contains "George" or name contains "Alice) and age from 20 to 30
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+ ((user.name.contains <span class="string">"George"</span>) | (user.name.contains <span class="string">"Alice"</span>)) &amp; (use.age.from 20..30)
+<span class="keyword">end</span>
+
+<span class="comment-delimiter">#</span><span class="comment">in this sutation it would be cleaner and easier to just move the and'd statement down
+</span><span class="comment-delimiter">#</span><span class="comment">a line as all seperate lines are and'd and lines have precedence from top to bottom
+</span><span class="comment-delimiter">#</span><span class="comment">additionaly operations on seperate lines don't need parens
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+ (user.name.contains <span class="string">"George"</span>) | (user.name.contains <span class="string">"Alice"</span>)
+ use.age.from 20..30
+<span class="keyword">end</span>
+
+<span class="comment-delimiter">#</span><span class="comment">should you attempt to use and attribute that doesn't exist for a given model
+</span><span class="comment-delimiter">#</span><span class="comment">rquery will tell you before it's sent to the db
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+  user.ssn.is == 123-45-6789
+<span class="keyword">end</span>
+<span class="comment-delimiter"># </span><span class="comment">RQuery::AttributeNotFoundError: The field 'ssn' doesn't exist for this object
+</span><span class="comment-delimiter"># </span><span class="comment">      from /Users/johnbender/Projects/rquery/lib/rquery/attribute_collection.rb:28:in `method_missing'
+</span><span class="comment-delimiter"># </span><span class="comment">      from (irb):24
+</span><span class="comment-delimiter"># </span><span class="comment">      from /Users/johnbender/Projects/rquery/lib/rquery/active_record/base.rb:16:in `where'
+</span><span class="comment-delimiter"># </span><span class="comment">      from /Users/johnbender/Projects/rquery/lib/rquery/active_record/base.rb:11:in `synchronize'
+</span><span class="comment-delimiter"># </span><span class="comment">      from /Users/johnbender/Projects/rquery/lib/rquery/active_record/base.rb:11:in `where'
+</span><span class="comment-delimiter"># </span><span class="comment">      from (irb):23
+</span>
+<span class="comment-delimiter">#</span><span class="comment">environment config
+</span><span class="type">RQuery</span>.use_symbols
+
+<span class="comment-delimiter">#</span><span class="comment">example of using symbols, you can see more at the RQuery page on my site.
+</span><span class="type">User</span>.where <span class="keyword">do</span> |user|
+ (<span class="constant">:name</span>.contains <span class="string">"George"</span>) | (<span class="constant">:name</span>.contains <span class="string">"Alice"</span>)
+ <span class="constant">:age</span>.from 20..30
+<span class="keyword">end</span>
+</pre>
+  </body>
+</html>
