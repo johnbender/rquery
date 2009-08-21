@@ -1,9 +1,9 @@
 module RQuery
-  module Declarations
+  module GlobalDeclarations
     #Allows the methods below to be included in 
     #the Field class and the Symbol class but remain
     #the same in implementation
-    #!name is redefined as an attr_accessor in the Field class!
+    #!name is redefined as an attr_accessor in the Attribute class!
     def name
       self.to_s if @name == nil
     end

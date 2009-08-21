@@ -1,8 +1,10 @@
 module RQuery
   class AttributeCollection
+    attr_reader :clauses
 
     def initialize(fields)
       @fields = fields.map{ |x| x.to_s }
+      @clauses = OperationCollector.new
     end
     
     #if the field was added upon initialization its a valid call
@@ -22,8 +24,15 @@ module RQuery
     # 	from /Users/johnbender/Projects/rquery/lib/rquery/where_clause.rb:20:in `method_missing'
     # 	from (irb):5
     def method_missing(symbol, *args)
-      if @fields.include?(symbol.to_s)
-        Attribute.new(symbol)
+      attr_str = symbol.to_s
+      eq_str = attr_str.gsub(/=/, '')
+
+      if @fields.include?(attr_str)
+        @clauses.add_operation(attr_str)
+      elsif @fields.include?(eq_str)
+        @clauses.add_operation(eq_str)
+        @clauses.send(:==, *args)
+        @clauses
       else
         raise AttributeNotFoundError, "The field '#{symbol.to_s}' doesn't exist for this object" 
       end
