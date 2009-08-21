@@ -31,11 +31,12 @@ module RQuery
         @clauses.add_operation(attr_str)
       elsif @fields.include?(eq_str)
         @clauses.add_operation(eq_str)
-        @clauses.send(:==, *args)
-        @clauses
+        @clauses.send(:==, *args)\
       else
         raise AttributeNotFoundError, "The field '#{symbol.to_s}' doesn't exist for this object" 
       end
+
+      @clauses
     end
 
   end
