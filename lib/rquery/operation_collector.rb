@@ -12,7 +12,7 @@ module RQuery
     end
     
     #return a conditions array for use with ActiveRecord.find
-    def conditions
+    def to_conditions
       [to_s] + @values
     end
     

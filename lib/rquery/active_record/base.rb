@@ -1,8 +1,7 @@
 module RQuery
   module ActiveRecord
-    @@where_mutex = Mutex.new
     def where(*args, &block)
-      collection = RQuery::AttributeCollection.new(self.new.attribute_names)
+      collector = RQuery::AttributeCollection.new(self.new.attribute_names)
       
       #Passes a new AttributeCollection object to the block
       #if RQuery.use_symbols has been called it may not be used
@@ -10,7 +9,7 @@ module RQuery
       yield(collection)
 
       #record altered conditions and values
-      conditions = collection.clauses.conditions
+      conditions = collector.clauses.to_conditions
 
       #limit the records returned (:first, :all, :last)
       limit = args.first ? args.first : :all

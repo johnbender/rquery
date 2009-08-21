@@ -6,6 +6,16 @@ module RQuery
       @fields = fields.map{ |x| x.to_s }
       @clauses = OperationCollector.new
     end
+
+    #id is not included in the attribute fields provided by active record
+    def id
+      add_clause('id')
+    end
+
+    def id=(*args)
+      add_clause('id')
+      eq(*args)
+    end
     
     #if the field was added upon initialization its a valid call
     #otherwise report to the user it is invalid. Reports errors at the ruby level
@@ -28,15 +38,26 @@ module RQuery
       eq_str = attr_str.gsub(/=/, '')
 
       if @fields.include?(attr_str)
-        @clauses.add_operation(attr_str)
+        add_clause(attr_str)
       elsif @fields.include?(eq_str)
-        @clauses.add_operation(eq_str)
-        @clauses.send(:==, *args)\
+        add_clause(eq_str)
+        eq(*args)
       else
         raise AttributeNotFoundError, "The field '#{symbol.to_s}' doesn't exist for this object" 
       end
 
+      #explicit return of OperationCollector for maximum readbilosity
       @clauses
+    end
+
+
+    private
+    def add_clause(str)
+      @clauses.add_operation(str)
+    end
+    
+    def eq(*args)
+      @clauses.send(:==, *args)
     end
 
   end
