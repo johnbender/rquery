@@ -1,6 +1,8 @@
 module RQuery
   class OperationCollector
-    
+    NOT_PREFIX = 'not_'
+    NIL_PREFIX = ''
+
     def initialize
       # @name, @prefix = optns[:name], optns[:prefix]
       @operations = []
@@ -39,10 +41,13 @@ module RQuery
     #2. if the second object popped is an OperationGroup the firest belongs to this group as
     #   well (it was on the same line). It is added to the OperationGroup and put back on the
     #   stack
+    #
+    #TODO requires refactoring
     def group(type)
       second_op, first_op = @operations.pop, @operations.pop
       
       #if the previous operation on the stack is an Operation Group we need to add to it
+      #and push it back on the @operations stack
       if first_op.class == OperationsGroup
         if first_op.type == type
           first_op.ops << second_op
@@ -70,39 +75,29 @@ module RQuery
     end
 
     def in(*args)
-      #flatten our args to prevent having to check for an array first arg
-      args.flatten!
-      
-      #if a range is passed as the first argument 
-      #use it alone, otherwise use the args array 
-      #examples:
-      #ruby => args.flatten! => stored values
-      #:id.between 1..100 => [1..100] => 1..100
-      #:id.between [1, 2, 3] => [1, 2, 3] => [1, 2, 3]
-      #:id.between 1, 2 => [1, 2] => [1, 2] 
-      @values << (args.first.class == Range ? args.first : args)
-      chain :in
+      call_in(NIL_PREFIX, *args)
+    end
+    
+    def not_in(*args)
+      call_in(NOT_PREFIX, *args)
     end
     
     def between(*args)
-      #flatten our args to prevent having to check for an array first arg
-      args.flatten!
-      
-      #if a range is passed use its first/last element 
-      #otherwise use the first and last element of the flattened args array
-      #examples:
-      #ruby => args.flatten! => stored values
-      #:id.between 1..100 => [1..100] => 1 100
-      #:id.between [1, 2, 3] => [1, 2, 3] => 1 3
-      #:id.between 1, 2 => [1, 2] => 1 2 
- 
-      @values += (args.first.class == Range ? [args.first.first, args.first.last] : [args.first, args.last])
-      chain :between
+      call_between(NIL_PREFIX, *args)
     end
     
+    def not_between(*args)
+      call_between(NOT_PREFIX, *args)
+    end
+
     def contains(str)
       @values << str
       chain :contains
+    end
+
+    def without(str)
+      @values << str
+      chain :without
     end
 
     def not=(arg)
@@ -123,14 +118,45 @@ module RQuery
     #:id.is.from 1,2
     #:is.is.from 2..10
     alias :from :between
+    alias :not_from :not_between
 
     private 
     def chain(method)
       @operations[@operations.length-1] += " #{RQuery::Config.adapter.send(method)}"
       self
     end
-  end
 
+    def call_in(prefix=nil, *args)
+      #flatten our args to prevent having to check for an array first arg
+      args.flatten!
+      
+      #if a range is passed as the first argument 
+      #use it alone, otherwise use the args array 
+      #examples:
+      #ruby => args.flatten! => stored values
+      #:id.between 1..100 => [1..100] => 1..100
+      #:id.between [1, 2, 3] => [1, 2, 3] => [1, 2, 3]
+      #:id.between 1, 2 => [1, 2] => [1, 2] 
+      @values << (args.first.class == Range ? args.first : args)
+      chain :"#{prefix}in"
+    end
+
+    def call_between(prefix=nil, *args)      
+      #flatten our args to prevent having to check for an array first arg
+      args.flatten!
+      
+      #if a range is passed use its first/last element 
+      #otherwise use the first and last element of the flattened args array
+      #examples:
+      #ruby => args.flatten! => stored values
+      #:id.between 1..100 => [1..100] => 1 100
+      #:id.between [1, 2, 3] => [1, 2, 3] => 1 3
+      #:id.between 1, 2 => [1, 2] => 1 2 
+ 
+      @values += (args.first.class == Range ? [args.first.first, args.first.last] : [args.first, args.last])
+      chain :"#{prefix}between"
+    end
+  end
   
   class OperationsGroup
     attr_accessor :ops, :type

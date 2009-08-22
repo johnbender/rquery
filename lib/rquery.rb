@@ -10,9 +10,10 @@ require "rquery/active_record.rb"
 
 module RQuery
   class Config
-    cattr_accessor :adapter
+    @@adapter = RQuery::Adapters::Sqlite
+    def self.adapter=(value)
+      @@adapter =  value
+    end
+    def self.adapter; @@adapter end
   end
 end
-
-##default adapter
-RQuery::Config.adapter = RQuery::Adapters::Sqlite

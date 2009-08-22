@@ -15,7 +15,7 @@ describe RQuery::Adapters::Sqlite do
         @adapter.not_between.should == "not " + @adapter.between
         @adapter.neq.should == "<> ?"
         @adapter.contains.should == "like '%' || ? || '%'"
-        @adapter.not_contains.should == "not " + @adapter.contains 
+        @adapter.without.should == "not " + @adapter.contains 
     end
 
 

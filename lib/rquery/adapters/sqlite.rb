@@ -5,7 +5,7 @@ module RQuery
             def self.contains
                 "like '%' || ? || '%'"
             end
-            def self.not_contains
+            def self.without
                 "not #{contains}"
             end
         end

@@ -18,15 +18,13 @@ Gem::Specification.new do |s|
     rakefile.rb
     examples/user.rb
     lib/rquery.rb
-    lib/rquery/declarations.rb
-    lib/rquery/serializers.rb
-    lib/rquery/attribute.rb
     lib/rquery/attribute_collection.rb
     lib/rquery/active_record.rb
     lib/rquery/active_record/base.rb
     lib/rquery/adapters.rb
     lib/rquery/adapters/sql.rb
     lib/rquery/adapters/sqlite.rb
+    lib/rquery/operation_collector.rb
     spec/active_record_base_spec_attribute_collection.rb
     spec/active_record_base_spec_symbols.rb
     spec/declarations_spec.rb

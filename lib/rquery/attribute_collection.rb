@@ -7,16 +7,6 @@ module RQuery
       @clauses = OperationCollector.new
     end
 
-    #id is not included in the attribute fields provided by active record
-    def id
-      add_clause('id')
-    end
-
-    def id=(*args)
-      add_clause('id')
-      eq(*args)
-    end
-    
     #if the field was added upon initialization its a valid call
     #otherwise report to the user it is invalid. Reports errors at the ruby level
     #instead of the data store level with something like "column doesn't exist"
@@ -37,16 +27,17 @@ module RQuery
       attr_str = symbol.to_s
       eq_str = attr_str.gsub(/=/, '')
 
-      if @fields.include?(attr_str)
+      if @fields.include?(attr_str) #if the method is part of the attributes 
         add_clause(attr_str)
-      elsif @fields.include?(eq_str)
+      elsif @fields.include?(eq_str) #if the method sans '=' is part of the attributes
         add_clause(eq_str)
         eq(*args)
       else
         raise AttributeNotFoundError, "The field '#{symbol.to_s}' doesn't exist for this object" 
       end
 
-      #explicit return of OperationCollector for maximum readbilosity
+      #explicit return of OperationCollector, same instance returned by methods of Operation collector
+      #but included here for clarity
       @clauses
     end
 

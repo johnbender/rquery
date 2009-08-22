@@ -6,7 +6,7 @@ module RQuery
       #Passes a new AttributeCollection object to the block
       #if RQuery.use_symbols has been called it may not be used
       #but otherwise will take the form attr_coll_object.attribute.is ...
-      yield(collection)
+      yield(collector)
 
       #record altered conditions and values
       conditions = collector.clauses.to_conditions
