@@ -15,7 +15,8 @@ describe ActiveRecord do
     
     ActiveRecord::MockObject.where{ |mock|
       mock.foo == "bar"
-    }.should == [:all, {:conditions => ["(foo = ?)", "bar"]}]  
+      mock.foo = "bar"
+    }.should == [:all, {:conditions => ["(foo = ? and foo = ?)", "bar", "bar"]}]  
 
     ActiveRecord::MockObject.where{ |mock|
       mock.foo > 1

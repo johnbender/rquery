@@ -23,11 +23,11 @@ RQuery extend ActiveRecord to provide the `where` method. `where` accepts a sing
 
 In a given UsersController your `show` action might find the User like so:
 
-    @user = User.find(params[:id])
+    @user = User.find(params[:age])
 
 Using RQuery:
 
-    @user = User.where { |user| user.id == params[:id] }
+    @user = User.where { |user| user.age == params[:age] }
 
 In the above case, RQuery doesn't provide much of an improvement over the traditional `find` method, but as the query becomes more complex its expressiveness begins to shine through:
 
@@ -43,7 +43,7 @@ Both the `from` and `between` methods accept argument lists `10,20` or an array 
 
 ###Other Examples 
 
-RQuery supports most of the common SQL operations: =, <>, >, <, >=, <=  as well as in, like (see below for specifics), and between. `obj.foo.not_<operation>` works for `.in` and  `.between` with the negation of == being `obj.foo.not = ` and the negation of `obj.foo.contains` as `obj.foo.without`. All operations are anded as of the current version.
+RQuery supports most of the common SQL operations: =, <>, >, <, >=, <=  as well as in, like (see below for specifics), and between. `obj.foo.not_<operation>` works for `.in` and  `.between` with the negation of == being `obj.foo.not = ` and the negation of `obj.foo.contains` as `obj.foo.without`.
 
 Operators:
 
@@ -64,7 +64,7 @@ Contains:
 
 In:
 
-   @obj = ActiveRecordObject.where do |obj|
+    @obj = ActiveRecordObject.where do |obj|
         obj.foo.in "bar", "baz", "bak"
     end
     #=> conditions array: ["foo in (?)", ["bar", "baz", "bak"]]
@@ -88,7 +88,7 @@ is equivalent to the find call:
 RQuery supports relatively complex queries including | and & operation groupings. All operations need to be on the same line and in parens and either the | operator or the & operator can be used on a singel line
 
     User.where do |user|
-        (mock.age > 20) | (mock.age.in 16,18)
+        (user.age > 20) | (user.age.in 16,18)
     end
 
 In the following example the & takes precedence and will be grouped with the contains "Alice" which will be or'd with the contains "George" 
