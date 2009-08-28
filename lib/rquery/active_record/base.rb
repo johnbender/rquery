@@ -3,9 +3,8 @@ module RQuery
     def where(*args, &block)
       collector = RQuery::AttributeCollection.new(self.new.attribute_names)
       
-      #Passes a new AttributeCollection object to the block
-      #if RQuery.use_symbols has been called it may not be used
-      #but otherwise will take the form attr_coll_object.attribute.is ...
+      #Passes a new AttributeCollection object to the block, which will in turn
+      #instantiate a OperationCollector to be used for each expression
       yield(collector)
 
       #record altered conditions and values

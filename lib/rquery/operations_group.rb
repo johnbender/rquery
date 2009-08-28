@@ -1,16 +1,18 @@
 module RQuery
   class OperationsGroup
-    attr_accessor :ops
+    attr_accessor :operations
     
     def initialize(args)
-      @ops = Array.new
+      @operations = []
       #if the two args passed are strings make a new group
       #otherwise add the second arg to the previous operation group
-      @ops = args[0].instance_of?(String) ? args[0,2] : (args[0].ops << args[1])
+      #
+      # NOTE coupling by type assumption here
+      @operations = args[0].instance_of?(String) ? args[0,2] : (args[0].operations << args[1])
     end
     
     def to_s
-      RQuery::Config.adapter.send("#{@type.to_s}_group", @ops)
+      RQuery::Config.adapter.send("#{@type.to_s}_group", @operations)
     end
   end
 
