@@ -98,7 +98,7 @@ module RQuery
       self
     end
 
-    def call_in(prefix=nil, *args)
+    def call_in(prefix, *args)
       #flatten our args to prevent having to check for an array first arg
       args.flatten!
       
@@ -113,7 +113,7 @@ module RQuery
       chain :"#{prefix}in"
     end
 
-    def call_between(prefix=nil, *args)      
+    def call_between(prefix, *args)      
       #flatten our args to prevent having to check for an array first arg
       args.flatten!
       
