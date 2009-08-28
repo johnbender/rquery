@@ -3,6 +3,7 @@ $: << File.expand_path(File.dirname(__FILE__) + "/../lib/")
 #RQuery is a small DSL for building queries in query languages like SQL. It is meant to be concise, easy to read
 #and expressive.
 
+require "rquery/operations_group.rb"
 require "rquery/operation_collector.rb"
 require "rquery/attribute_collection.rb"
 require "rquery/adapters.rb"
