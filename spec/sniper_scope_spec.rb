@@ -15,8 +15,7 @@ describe ActiveRecord do
   end
 
   it "should set the named scope conditions properly when the sniper_scope is defined" do
-    result = MockObject.baz('bar')
-    debugger
-    result.should == [:all, ['foo = ?', 'bar']]
+    result = MockObject.baz('bar').proxy_options
+    result.should == {:conditions => ['(foo = ?)', 'bar']}
   end
 end

@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = "rquery"
-  s.version     = "0.3.0"
-  s.date        = "2009-08-22"
+  s.version     = "0.3.5"
+  s.date        = "2010-01-14"
   
   s.summary     = "An ActiveRecord extension providing a DSL replacement for complex find queries."
   s.description = ""
@@ -13,7 +13,6 @@ Gem::Specification.new do |s|
   s.has_rdoc    = false
   
   s.files       = %w(
-
     README.markdown
     rakefile.rb
     lib/rquery.rb
@@ -25,9 +24,10 @@ Gem::Specification.new do |s|
     lib/rquery/adapters/sqlite.rb
     lib/rquery/operation_collector.rb
     spec/active_record_base_spec_attribute_collection.rb
-    spec/mock_active_record.rb
     spec/or_and_operations_spec.rb
     spec/sqlite_adapter_spec.rb
+    spec/sniper_scope_spec.rb
+    spec/spec_helper.rb    
     )   
   
 end
