@@ -13,7 +13,7 @@ class MockObject < ActiveRecord::Base
   end
   
   def attribute_names
-    ["foo"]
+    ["foo", "id"]
   end
 end
 

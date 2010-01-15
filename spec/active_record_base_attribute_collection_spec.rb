@@ -9,6 +9,12 @@ describe ActiveRecord do
   it "should set up a where method" do
     MockObject.respond_to?(:where).should == true
   end
+
+  it "should behave properly when using the id method" do
+    MockObject.where { |mock|
+      mock.id == 1
+    }.should == [:all, {:conditions => ['(id = ?)', 1]}]
+  end
   
   it "should return sql with foo, the operations, and the values for mock.foo <operation> <value>" do
     MockObject.where{ |mock|
@@ -45,6 +51,7 @@ describe ActiveRecord do
     MockObject.where{ |mock|
       mock.foo.not_between 1..3
     }.should == [:all, {:conditions => ["(foo not between ? and ?)", 1, 3]}] 
+
 
     MockObject.where{ |mock|
       mock.foo.not_from 1..3
@@ -189,6 +196,6 @@ describe ActiveRecord do
 
   it "should throw and exception when trying to use a field not in the objects attributes" do    
     attribute = "arbitrary_attribute_name"
-    lambda { MockObject.where{ |mock| mock.send(attribute) == 2 }}.should raise_error(RQuery::AttributeNotFoundError)
+    lambda { MockObject.where{ |mock| mock.send(attribute) == 2 }}.should raise_error(NoMethodError)
   end
 end
