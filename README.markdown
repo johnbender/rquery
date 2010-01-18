@@ -17,6 +17,20 @@ In you're rails environment file simply require rquery. The default adapter is t
 
 You can view both Sql and Sqlite in the adapters directory if you are interested in writing your own (mysql?). As a side note it would be nice at some point to decide the adapter based on the db chosen for a given environment.
 
+###Sniper Scopes
+
+Its now extremely easy to use rquery's dsl as named scopes. For example
+
+    class User < ActiveRecord::Base
+      sniper_scope :with_name do |user, passed_name|
+        user.name == passed_name
+      end
+    end
+
+    User.with_name('George')
+   
+The first parameter will be an object representing the user and the rest will be the parameters passed when the method is called. Since this functionality makes use of the named_scope method it can be chained with other sniper_scopes and named_scopes. If the name seems a bit odd, I'm open to other suggestions :D
+
 ###Examples
 
 RQuery extend ActiveRecord to provide the `where` method. `where` accepts a single optional argument and a block that represents the query statements
