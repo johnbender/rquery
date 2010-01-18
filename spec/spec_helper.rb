@@ -12,8 +12,15 @@ class MockObject < ActiveRecord::Base
   def initialize
   end
   
-  def attribute_names
-    ["foo", "id"]
+  def self.columns
+    [Column.new("foo"), Column.new("id")]
+  end
+end
+
+class Column 
+  attr_accessor :name
+  def initialize(n)
+    @name = n
   end
 end
 

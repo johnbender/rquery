@@ -2,7 +2,7 @@ module RQuery
   module ActiveRecord
     module ClassMethods
       def where(*args, &block)
-        collector = AttributeCollection.new(self.new.attribute_names)
+        collector = AttributeCollection.new(columns.map {|x| x.name })
         
         #Passes a new AttributeCollection object to the block, which will in turn
         #instantiate a OperationCollector to be used for each expression
@@ -22,7 +22,7 @@ module RQuery
         #rescope self
         klass = self
         named_scope name, lambda { |*args|
-          collector = AttributeCollection.new(klass.new.attribute_names)
+          collector = AttributeCollection.new(klass.columns.map {|x| x.name })
           block.call(collector, *args)
           { :conditions => collector.clauses.to_conditions }
         }

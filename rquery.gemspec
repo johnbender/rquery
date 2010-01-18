@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
     lib/rquery/adapters/sqlite.rb
     lib/rquery/operation_collector.rb
     lib/rquery/operations_group.rb
-    spec/active_record_base_spec_attribute_collection.rb
+    spec/active_record_base_attribute_collection_spec.rb
     spec/or_and_operations_spec.rb
     spec/sqlite_adapter_spec.rb
     spec/sniper_scope_spec.rb

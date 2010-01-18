@@ -5,7 +5,7 @@ module RQuery
     def initialize(fields)
       @clauses = OperationCollector.new
 
-      # For each field define it and its setter to add the appropriate clausere
+      # For each field define it and its setter to add the appropriate clause
       fields.each do |field|
         self.class.send(:define_method, field) do |*args|
           add_clause(field)
